@@ -1,28 +1,26 @@
 const venom = require('venom-bot');
-const { Configuration, OpenAIApi } = require("openai");
-
-
-const configuration = new Configuration({
-  apiKey: "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"
-});
-const openai = new OpenAIApi(configuration);
-
+const axios = require('axios');
 
 venom
   .create()
-  .then((client) => start(client, openai))
+  .then((client) => start(client))
   .catch((erro) => {
     console.log(erro);
   });
 
-function start(client, openai) {
-    elaineBot(client, openai);
+function start(client) {
+    elaineBot(client);
 };
 
-async function elaineBot(client, openai){
+async function elaineBot(client){
     console.log("Morgana-chan kyun kyun");
     client.onMessage(message => {
-      sendMsg(client, openai, message.from, message.body);
+      axios.post('http://127.0.0.1:5000/', {
+        "data": message.body
+      })
+      .then(data => {
+        sendMsg(client, message.from, data.data);
+      })
     })
 }
 
@@ -32,12 +30,9 @@ async function getChat(client){
     console.log(chat);
 }
 
-async function sendMsg(client, openai, sender, msg) {
-    const completion = await openai.createCompletion("text-davinci-001", {
-      prompt: msg,
-    });
+async function sendMsg(client, sender, msg) {
     await client
-    .sendText(sender, completion.data.choices[0].text.slice(2))
+    .sendText(sender, msg)
     .then((result) => {
       console.log('Result: ', result); //return object success
     })
@@ -51,9 +46,3 @@ async function newMsg(client){
   console.log(contactNewMsg);
 }
 
-async function getAI(openai, msg){
-  const completion = await openai.createCompletion("text-davinci-001", {
-    prompt: msg,
-  });
-  return await completion.data.choices[0].text;
-}

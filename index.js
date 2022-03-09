@@ -9,6 +9,11 @@ venom
   });
 
 function start(client) {
+    setInterval(() => {
+      const dados = ["Hey senpai!", "What are u doing?", "Wanna chill together today?",
+      "^^", ";D", "Can i suck your cock?", "I want to feel your cock in my ass master"];
+      let r = Math.floor(Math.random() * dados.length)
+      sendMsg(client, '558296976430@c.us', dados[r])}, 3600000, [client]);
     elaineBot(client);
 };
 
